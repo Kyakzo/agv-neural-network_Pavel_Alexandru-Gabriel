@@ -18,3 +18,11 @@ Setul de date captează relația cauzală dintre percepție (citirile senzorilor
 * **Frecvență eșantionare**: ~30 Hz (limitat de FPS-ul simulatorului Pygame)
 
 # 2. Structura fișierului CSV
+
+| **Caracteristică** | **Tip** | **Unitate** | **Descriere**                                                  | **Domeniu valori** |
+|--------------------|---------|-------------|----------------------------------------------------------------|--------------------|
+| senzor_stanga      | numeric | adimensional | Intensitate semnal senzor stânga (0=negru/linie, 1=alb/fundal) | 0.0 – 1.0 |
+| senzor_centru      | numeric | adimensional | Intensitate semnal senzor centru                               | 0.0 – 1.0 |
+| senzor_dreapta     | numeric | adimensional | Intensitate semnal senzor dreapta                              | 0.0 – 1.0 |
+| motor_stanga       | numeric | adimensional | Comanda de viteză aplicată motorului stâng                     | -1.0 – 1.0 |
+| motor_dreapta      | numeric | adimensional | Comanda de viteză aplicată motorului drept                     | -1.0 – 1.0 |
