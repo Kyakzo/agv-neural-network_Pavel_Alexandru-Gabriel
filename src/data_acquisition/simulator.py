@@ -6,6 +6,8 @@ import random
 import json
 import requests
 import numpy as np
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from tensorflow.keras.models import load_model
 from config.config import *
 
@@ -24,6 +26,7 @@ class Robot(pygame.sprite.Sprite):
         self.motor_left = 0
         self.motor_right = 0
         self.sensors = []
+        self.update_sensors()
 
     def update(self, motor_left, motor_right):
         self.motor_left = np.clip(motor_left, -1, 1)
@@ -86,7 +89,7 @@ class Robot(pygame.sprite.Sprite):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Simulator Robot - Mod: " + MOD_OPERARE)
+    pygame.display.set_caption("Simulator robot - Mod: " + MOD_OPERARE)
     clock = pygame.time.Clock()
 
     track_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -154,8 +157,8 @@ def main():
             sensor_readings = robot.read_sensors(track_surface)
             input_data = np.array(sensor_readings).reshape(1, 3)
             prediction = model.predict(input_data)[0]
-            motor_left_cmd = prediction[0]
-            motor_right_cmd = prediction[1]
+            motor_left_cmd = float(prediction[0])
+            motor_right_cmd = float(prediction[1])
 
             robot.update(motor_left_cmd, motor_right_cmd)
 
