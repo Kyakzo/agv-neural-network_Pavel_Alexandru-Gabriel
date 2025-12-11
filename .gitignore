@@ -4,5 +4,6 @@ data/processed/model_robot.keras
 data/train
 src/neural_network/antrenare_old.py
 #src/neural_network/graph.png
-src/neural_network/antrenare_extended.py
-results
+#src/neural_network/antrenare_extended.py
+src/neural_network/antrenare_old_v2.py
+#results
