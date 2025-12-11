@@ -24,6 +24,11 @@ def discretize_action(left_motor, right_motor, threshold=0.2):
 def main():
     print("=== Începere antrenare model ===")
 
+    # results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'results'))
+    # if not os.path.exists(results_dir):
+    #     os.makedirs(results_dir)
+    #     print(f"Creat directorul de rezultate: {results_dir}")
+
     if not os.path.exists(CSV_FILENAME):
         print(f"Eroare: Fișierul de date {CSV_FILENAME} nu există!")
         return
