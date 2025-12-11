@@ -1,0 +1,6 @@
+model_robot.h5
+model_robot.keras
+data/train
+.gitignore
+src/neural_network/antrenare_old.py
+src/neural_network/graph.png

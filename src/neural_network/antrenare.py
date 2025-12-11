@@ -1,81 +1,100 @@
-import keras
-import pandas as pd
+import os
+import sys
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+import pandas as pd
+import tensorflow as pd_tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-from tensorflow.keras.optimizers import Adam
-import os
-from config.config import CSV_FILENAME, MODEL_FILENAME, TEST_SIZE
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, f1_score, classification_report
+import matplotlib.pyplot as plt
 
-if not os.path.exists(CSV_FILENAME):
-    print(f"EROARE: Fișierul {CSV_FILENAME} nu există.")
-    print("Rulați întâi 'simulator.py' în modul 'MANUAL_LOGGING' pentru a genera date.")
-else:
-    print(f"Se încarcă datele din {CSV_FILENAME}...")
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    dataset = pd.read_csv(CSV_FILENAME)
-    
-    dataset = dataset[(dataset['motor_stanga'] != 0) | (dataset['motor_dreapta'] != 0)]
-    
-    print(f"S-au încărcat {len(dataset)} eșantioane de date.")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from config.config import *
 
-    X = dataset[['senzor_stanga', 'senzor_centru', 'senzor_dreapta']].values
-    Y = dataset[['motor_stanga', 'motor_dreapta']].values
-    
-    X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=TEST_SIZE, random_state=42)
-    
-    print(f"Set antrenare: {len(X_train)} eșantioane")
-    print(f"Set validare: {len(X_val)} eșantioane")
+def discretize_action(left_motor, right_motor, threshold=0.2):
+    if right_motor - left_motor > threshold:
+        return 1
+    elif left_motor - right_motor > threshold:
+        return 2
+    elif left_motor > 0 and right_motor > 0:
+        return 0
+    return 3
 
-    print("Se definește modelul...")
-    
-    model = Sequential()
-    model.add(Dense(16, input_dim=3, activation='relu'))
-    
-    model.add(Dense(8, activation='relu'))
-    
-    model.add(Dense(2, activation='tanh'))
-    
-    model.compile(loss='mean_squared_error',
-                  optimizer=Adam(learning_rate=0.001),
-                  metrics=[
-                      keras.metrics.BinaryAccuracy(),
-                      keras.metrics.FalseNegatives(),
-                      'accuracy',
-                      'mse'
-                  ],
-                  )
-    
-    model.summary()
+def main():
+    print("=== Începere antrenare model ===")
 
-    print("Se antrenează modelul...")
-    
-    # history = model.fit(
-    #     X_train, Y_train,
-    #     validation_data=(X_val, Y_val),
-    #     # epochs=50,
-    #     # batch_size=32,
-    #     epochs=50,
-    #     batch_size=32,
-    #     verbose=1
-    # )
+    if not os.path.exists(CSV_FILENAME):
+        print(f"Eroare: Fișierul de date {CSV_FILENAME} nu există!")
+        return
 
+    df = pd.read_csv(CSV_FILENAME)
+
+    if len(df) < 50:
+        print("Avertisment: Prea puține date pentru antrenare.")
+    
+    X = df[['senzor_stanga', 'senzor_centru', 'senzor_dreapta']].values
+    y = df[['motor_stanga', 'motor_dreapta']].values
+
+    print(f"Date încărcate: {len(df)} mostre.")
+
+    X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.30, random_state=42, shuffle=True)
+
+    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.50, random_state=42)
+
+    print(f"Split: Train={len(X_train)}, Val={len(X_val)}, Test={len(X_test)}")
+
+    model = Sequential([
+        Dense(16, input_shape=(3,), activation='relu'),
+        Dense(8, activation='relu'),
+        Dense(2, activation='linear')
+    ])
+
+    model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+
+    print(f"\nAntrenare cu: Epochs={EPOCHS}, Batch_size={BATCH_SIZE}...")
     history = model.fit(
-        X_train, Y_train,
-        validation_data=(X_val, Y_val),
-        epochs=50,
-        batch_size=32,
-        verbose=2,
-        validation_batch_size=None,
-        callbacks=None,
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=EPOCHS,
+        batch_size=BATCH_SIZE,
+        verbose=1
     )
+
+    print("\n=== Evaluare pe Test set ===")
+    test_loss, test_mae = model.evaluate(X_test, y_test, verbose=0)
+    print(f"Test Loss (MSE): {test_loss:.4f}")
+
+    y_pred = model.predict(X_test)
+
+    y_test_classes = [discretize_action(l, r) for l, r in y_test]
+    y_pred_classes = [discretize_action(l, r) for l, r in y_pred]
     
-    print(f"Se salvează modelul antrenat ca {MODEL_FILENAME}...")
-    model.save(MODEL_FILENAME)
-    print("Salvare completă.")
+    acc = accuracy_score(y_test_classes, y_pred_classes)
+    f1 = f1_score(y_test_classes, y_pred_classes, average='macro')
+    
+    print(f"\nMetrici Calculate (prin discretizare):")
+    print(f"Acuratețe: {acc*100:.2f}% (Target: >= 65%)")
+    print(f"F1-Score (macro): {f1:.4f} (Target: >= 0.60)")
+
+    save_path = MODEL_FILENAME
+    
+    model.save(save_path)
+    print(f"\nModel salvat în: {save_path}")
+
+    print("\n" + "="*50)
+    print("TABEL JUSTIFICARE HIPERPARAMETRI (Nivel 1)")
+    print("="*50)
+    print(f"{ 'Parametru':<25} | { 'Valoare':<20}")
+    print("-" * 47)
+    print(f"{ 'Nr. Epoci':<25} | {EPOCHS:<20}")
+    print(f"{ 'Batch Size':<25} | {BATCH_SIZE:<20}")
+    print(f"{ 'Optimizer':<25} | {'Adam':<20}")
+    print(f"{ 'Loss Function':<25} | {'MSE (Regression)':<20}")
+    print(f"{ 'Train Split':<25} | {'70%':<20}")
+    print(f"{ 'Validation Split':<25} | {'15%':<20}")
+    print(f"{ 'Test Split':<25} | {'15%':<20}")
+    print("="*50)
 
     print("Se generează graficul de antrenare...")
     plt.figure(figsize=(10, 5))
@@ -86,6 +105,9 @@ else:
     plt.ylabel('Eroare (MSE)')
     plt.legend()
     plt.grid(True)
-    plt.savefig('graph.png')
+    plt.savefig('loss_curve.png')
     plt.show()
-    print("Grafic salvat ca 'graph.png'.")
+    print("Grafic salvat ca 'loss_curve.png'.")
+
+if __name__ == "__main__":
+    main()
