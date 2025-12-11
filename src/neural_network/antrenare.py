@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import numpy as np
 import pandas as pd
 import tensorflow as pd_tf
@@ -24,10 +25,10 @@ def discretize_action(left_motor, right_motor, threshold=0.2):
 def main():
     print("=== Începere antrenare model ===")
 
-    # results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'results'))
-    # if not os.path.exists(results_dir):
-    #     os.makedirs(results_dir)
-    #     print(f"Creat directorul de rezultate: {results_dir}")
+    results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'results'))
+    if not os.path.exists(results_dir):
+        os.makedirs(results_dir)
+        print(f"Creat directorul de rezultate: {results_dir}")
 
     if not os.path.exists(CSV_FILENAME):
         print(f"Eroare: Fișierul de date {CSV_FILENAME} nu există!")
@@ -66,6 +67,11 @@ def main():
         verbose=1
     )
 
+    history_df = pd.DataFrame(history.history)
+    history_path = os.path.join(results_dir, 'training_history.csv')
+    history_df.to_csv(history_path, index_label='epoch')
+    print(f"Istoric antrenare salvat în: {history_path}")
+
     print("\n=== Evaluare pe Test set ===")
     test_loss, test_mae = model.evaluate(X_test, y_test, verbose=0)
     print(f"Test Loss (MSE): {test_loss:.4f}")
@@ -78,9 +84,39 @@ def main():
     acc = accuracy_score(y_test_classes, y_pred_classes)
     f1 = f1_score(y_test_classes, y_pred_classes, average='macro')
     
-    print(f"\nMetrici Calculate (prin discretizare):")
+    print(f"\nMetrici calculate (prin discretizare):")
     print(f"Acuratețe: {acc*100:.2f}% (Target: >= 65%)")
     print(f"F1-Score (macro): {f1:.4f} (Target: >= 0.60)")
+
+    metrics = {
+        "test_loss_mse": float(test_loss),
+        "test_mae": float(test_mae),
+        "accuracy": float(acc),
+        "f1_score_macro": float(f1)
+    }
+    metrics_path = os.path.join(results_dir, 'test_metrics.json')
+    with open(metrics_path, 'w') as f:
+        json.dump(metrics, f, indent=4)
+    print(f"Metrici test salvate în: {metrics_path}")
+
+    hyperparams = {
+        "EPOCHS": EPOCHS,
+        "BATCH_SIZE": BATCH_SIZE,
+        "TEST_SIZE": 0.30,
+        "VALIDATION_SPLIT": 0.50, # Applied to temp
+        "OPTIMIZER": "adam",
+        "LOSS_FUNCTION": "mse",
+        "LAYERS": [16, 8, 2]
+    }
+    
+    yaml_content = ""
+    for key, value in hyperparams.items():
+        yaml_content += f"{key}: {value}\n"
+        
+    yaml_path = os.path.join(results_dir, 'hyperparameters.yaml')
+    with open(yaml_path, 'w') as f:
+        f.write(yaml_content)
+    print(f"Hiperparametri salvați în: {yaml_path}")
 
     save_path = MODEL_FILENAME
     
@@ -88,7 +124,7 @@ def main():
     print(f"\nModel salvat în: {save_path}")
 
     print("\n" + "="*50)
-    print("TABEL JUSTIFICARE HIPERPARAMETRI (Nivel 1)")
+    print("TABEL JUSTIFICARE HIPERPARAMETRI")
     print("="*50)
     print(f"{ 'Parametru':<25} | { 'Valoare':<20}")
     print("-" * 47)
