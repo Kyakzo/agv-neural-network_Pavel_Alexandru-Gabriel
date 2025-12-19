@@ -9,6 +9,7 @@ from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score, classification_report
 import matplotlib.pyplot as plt
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from config.config import *
@@ -26,9 +27,15 @@ def main():
     print("=== Începere antrenare model ===")
 
     results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'results'))
+    docs_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'docs'))
+
     if not os.path.exists(results_dir):
         os.makedirs(results_dir)
         print(f"Creat directorul de rezultate: {results_dir}")
+
+    if not os.path.exists(docs_dir):
+        os.makedirs(docs_dir)
+        print(f"Creat directorul docs: {docs_dir}")
 
     if not os.path.exists(CSV_FILENAME):
         print(f"Eroare: Fișierul de date {CSV_FILENAME} nu există!")
@@ -58,13 +65,28 @@ def main():
 
     model.compile(optimizer='adam', loss='mse', metrics=['mae'])
 
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5,
+        verbose=1,
+        restore_best_weights=True
+    )
+
+    lr_scheduler = ReduceLROnPlateau(
+        monitor='val_loss',
+        factor=0.5,
+        patience=3,
+        verbose=1
+    )
+
     print(f"\nAntrenare cu: Epochs={EPOCHS}, Batch_size={BATCH_SIZE}...")
     history = model.fit(
         X_train, y_train,
         validation_data=(X_val, y_val),
         epochs=EPOCHS,
         batch_size=BATCH_SIZE,
-        verbose=1
+        verbose=1,
+        callbacks=[early_stopping, lr_scheduler]
     )
 
     history_df = pd.DataFrame(history.history)
@@ -146,9 +168,10 @@ def main():
     plt.ylabel('Eroare (MSE)')
     plt.legend()
     plt.grid(True)
-    plt.savefig('loss_curve.png')
-    plt.show()
-    print("Grafic salvat ca 'loss_curve.png'.")
+    loss_curve_path = os.path.join(docs_dir, 'loss_curve.png')
+    plt.savefig(loss_curve_path)
+    # plt.show()
+    print(f"Grafic salvat în '{loss_curve_path}'.")
 
 if __name__ == "__main__":
     main()
