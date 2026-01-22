@@ -1,15 +1,15 @@
 {
-  "model": "optimized_model.h5",
-  "test_accuracy": 0.76,
-  "test_f1_macro": 0.73,
-  "test_precision_macro": 0.75,
-  "test_recall_macro": 0.72,
-  "false_negative_rate": 0.10,
+  "model": "trained_model.keras",
+  "test_accuracy": 0.72,
+  "test_f1_macro": 0.65,
+  "test_precision_macro": 0.68,
+  "test_recall_macro": 0.62,
+  "false_negative_rate": 0.22,
   "false_positive_rate": 0.15,
-  "inference_latency_ms": 22,
+  "inference_latency_ms": 32,
   "improvement_vs_baseline": {
-    "accuracy": "+12%",
-    "f1_score": "+47%",
-    "latency": "+46%"
+    "accuracy": "+12.5%",
+    "f1_score": "+150%",
+    "latency": "-28.8%"
   }
 }
