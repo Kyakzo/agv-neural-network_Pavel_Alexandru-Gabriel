@@ -1,0 +1,2 @@
+Conform arhitecturii retelei neuronale si a programului, nu exista date necesare pentru a fi incarcate in acest folder.
+Astfel incat este necesara afisarea astui folder in structura, iar commit-urile le public via Pycharm (care ignora folderul daca nu are un fisier in el), am creat acest dummy file.
