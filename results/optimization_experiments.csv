@@ -1,0 +1,6 @@
+"Exp#","Modificare față de Baseline (Etapa 5)","Accuracy","F1-score","Timp antrenare","Observații"
+"Baseline","Configurația din Etapa 5 (Batch Size 32)",0.64,0.26,"< 1 min","Referință"
+"Exp 1","Learning rate 0.001 -> 0.002",0.68,0.55,"< 1 min","Convergență mai rapidă, dar instabilă"
+"Exp 2","Batch size 32 -> 64",0.66,0.45,"30 sec","Epoch 16: early stopping"
+"Exp 3","+1 hidden layer (32 neuroni)",0.72,0.65,"10 sec","Epoch 11: early stopping"
+"Exp 4","Optimizer 'adam' -> 'rmsprop'",0.65,0.48,"15 sec","Performanță puțin mai slabă, Epoch 39: early stopping"

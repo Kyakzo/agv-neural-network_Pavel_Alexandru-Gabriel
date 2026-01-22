@@ -441,42 +441,60 @@ agv-neural-network/
 
 ---
 
-## Livrabile Obligatorii
+## Checklist Final – Bifați Totul Înainte de Predare
 
-Asigurați-vă că următoarele fișiere există și sunt completate:
+### Prerequisite Etapa 5 (verificare)
+- [X] Model antrenat există în `models/trained_model.h5`
+- [X] Metrici baseline raportate (Accuracy ≥65%, F1 ≥0.60)
+- [X] UI funcțional cu model antrenat
+- [X] State Machine implementat
 
-1. **`etapa6_optimizare_concluzii.md`** (acest fișier) cu:
-   - Tabel experimente optimizare (minimum 4)
-   - Tabel modificări aplicație software
-   - Analiză confusion matrix
-   - Analiză 5 exemple greșite
-   - Concluzii și lecții învățate
+### Optimizare și Experimentare
+- [X] Minimum 4 experimente documentate în tabel
+- [X] Justificare alegere configurație finală
+- [X] Model optimizat salvat în `models/optimized_model.h5` (trained_model.keras este optimizat)
+- [X] Metrici finale: **Accuracy ≥70%**, **F1 ≥0.65**
+- [X] `results/optimization_experiments.csv` cu toate experimentele
+- [X] `results/final_metrics.json` cu metrici model optimizat
 
-2. **`models/optimized_model.h5`** (sau `.pt`, `.lvmodel`) - model optimizat funcțional
+### Analiză Performanță
+- [X] Confusion matrix generată în `docs/confusion_matrix_optimized.png`
+- [X] Analiză interpretare confusion matrix completată în README
+- [X] Minimum 5 exemple greșite analizate detaliat
+- [X] Implicații industriale documentate (cost FN vs FP)
 
-3. **`results/optimization_experiments.csv`** - toate experimentele
+### Actualizare Aplicație Software
+- [X] Tabel modificări aplicație completat
+- [X] UI încarcă modelul OPTIMIZAT (nu cel din Etapa 5)
+- [X] Screenshot `docs/screenshots/inference_optimized.png`
+- [X] Pipeline end-to-end re-testat și funcțional
 
-4. **`results/final_metrics.json`** - metrici finale:
+### Concluzii
+- [X] Secțiune evaluare performanță finală completată
+- [X] Limitări identificate și documentate
+- [X] Lecții învățate (minimum 5)
+- [X] Plan post-feedback scris
 
-Exemplu:
-```json
-{
-  "model": "optimized_model.h5",
-  "test_accuracy": 0.76,
-  "test_f1_macro": 0.73,
-  "test_precision_macro": 0.75,
-  "test_recall_macro": 0.72,
-  "false_negative_rate": 0.10,
-  "false_positive_rate": 0.15,
-  "inference_latency_ms": 22,
-  "improvement_vs_baseline": {
-    "accuracy": "+12%",
-    "f1_score": "+47%",
-    "latency": "+46%"
-  }
-}
-```
+### Verificări Tehnice
+- [ ] `requirements.txt` actualizat
+- [X] Toate path-urile RELATIVE
+- [X] Cod nou comentat (minimum 15%)
+- [X] `git log` arată commit-uri incrementale
+- [X] Verificare anti-plagiat respectată
 
-5. **`docs/confusion_matrix_optimized.png`** - confusion matrix model final
+### Verificare Actualizare Etape Anterioare (ITERATIVITATE)
+- [X] README Etapa 3 actualizat (dacă s-au modificat date/preprocesare)
+- [X] README Etapa 4 actualizat (dacă s-a modificat arhitectura/State Machine)
+- [X] README Etapa 5 actualizat (dacă s-au modificat parametri antrenare)
+- [X] `docs/state_machine.*` actualizat pentru a reflecta versiunea finală
+- [X] Toate fișierele de configurare sincronizate cu modelul optimizat
 
-6. **`docs/screenshots/inference_optimized.png`** - demonstrație UI cu model optimizat
+### Pre-Predare
+- [X] `etapa6_optimizare_concluzii.md` completat cu TOATE secțiunile
+- [X] Structură repository conformă modelului de mai sus
+- [X] Commit: `"Etapa 6 completă – Accuracy=X.XX, F1=X.XX (optimizat)"`
+- [X] Tag: `git tag -a v0.6-optimized-final -m "Etapa 6 - Model optimizat + Concluzii"`
+- [X] Push: `git push origin main --tags`
+- [X] Repository accesibil (public sau privat cu acces profesori)
+
+---
