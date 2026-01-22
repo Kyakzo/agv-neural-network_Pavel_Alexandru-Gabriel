@@ -63,6 +63,12 @@ def main():
         Dense(2, activation='linear')
     ])
 
+    # model = Sequential([
+    #     Dense(16, input_shape=(3,), activation='relu'),
+    #     Dense(8, activation='relu'),
+    #     Dense(32, activation='relu'),
+    #     Dense(2, activation='linear')])
+
     model.compile(optimizer='adam', loss='mse', metrics=['mae'])
 
     early_stopping = EarlyStopping(

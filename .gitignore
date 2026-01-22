@@ -2,6 +2,10 @@
 #model_robot.h5
 #model_robot.keras
 #data/processed/model_robot.keras
-data/train
+#data/train
 #src/neural_network/graph.png
 #antrenare_old_v2.py
+misc.xml
+vcs.xml
+profiles_settings.xml
+modules.xml
