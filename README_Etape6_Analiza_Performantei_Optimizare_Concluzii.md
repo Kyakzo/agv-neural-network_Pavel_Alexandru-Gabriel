@@ -4,7 +4,7 @@
 **Instituție:** POLITEHNICA București – FIIR  
 **Student:** Pavel Alexandru-Gabriel 
 **Link Repository GitHub:** https://github.com/Kyakzo/agv-neural-network_Pavel_Alexandru-Gabriel
-**Data predării:** 15/01/2026
+**Data predării:** 22/01/2026
 
 ---
 ## Scopul Etapei 6
@@ -86,7 +86,7 @@ Nu am ales niciuna dintre experimente ca model final pentru că rezultatele metr
 | **UI** | Afișeaza doar coordonatele (senzor data) AGV-ului | N/A                                                        | Simulatorul afiseaza in timp real traseul AGV-ului                                     |
 
 ```markdown
-### Modificări concrete aduse în Etapa 6: (TO DO)
+### Modificări concrete aduse în Etapa 6:
 
 **Actualizare UI:**
    - S-a adăugat un grafic de tip bară în interfața web pentru a vizualiza probabilitățile asociate fiecărei clase (stânga, dreapta, înainte).
@@ -375,25 +375,24 @@ Salvați în `docs/results/`:
 **Structură COMPLETĂ și FINALĂ:**
 
 ```
-proiect-rn-[prenume-nume]/
+agv-neural-network/
 ├── README.md                               # Overview general proiect (FINAL)
-├── etapa3_analiza_date.md                  # Din Etapa 3
-├── etapa4_arhitectura_sia.md               # Din Etapa 4
-├── etapa5_antrenare_model.md               # Din Etapa 5
-├── etapa6_optimizare_concluzii.md          # ← ACEST FIȘIER (completat)
+├── x                  # Din Etapa 3
+├── README_Etapa4_Arhitectura_SIA.md        # Din Etapa 4
+├── README_Etapa5_Antrenare_RN.md           # Din Etapa 5
+├── README_Etape6_Analiza_Performantei_Optimizare_Concluzii.md         # ← ACEST FIȘIER (completat)
 │
 ├── docs/
+│   ├── datasets/
 │   ├── state_machine.png                   # Din Etapa 4
-│   ├── state_machine_v2.png                # NOU - Actualizat (dacă modificat)
 │   ├── loss_curve.png                      # Din Etapa 5
-│   ├── confusion_matrix_optimized.png      # NOU - OBLIGATORIU
+│   ├── confusion_matrix.png                
 │   ├── results/                            # NOU - Folder vizualizări
 │   │   ├── metrics_evolution.png           # NOU - Evoluție Etapa 4→5→6
 │   │   ├── learning_curves_final.png       # NOU - Model optimizat
+│   │   ├── confusion_matrix_optimized.png   
 │   │   └── example_predictions.png         # NOU - Grid exemple
 │   ├── optimization/                       # NOU - Grafice optimizare
-│   │   ├── accuracy_comparison.png
-│   │   └── f1_comparison.png
 │   └── screenshots/
 │       ├── ui_demo.png                     # Din Etapa 4
 │       ├── inference_real.png              # Din Etapa 5
@@ -401,37 +400,40 @@ proiect-rn-[prenume-nume]/
 │
 ├── data/                                   # Din Etapa 3-5 (NESCHIMBAT)
 │   ├── raw/
+│   │   └── date_robot.csv
 │   ├── generated/
 │   ├── processed/
+│   │   ├── model_robot.h5
+│   │   └── model_robot.keras
 │   ├── train/
 │   ├── validation/
 │   └── test/
 │
 ├── src/
-│   ├── data_acquisition/                   # Din Etapa 4
-│   ├── preprocessing/                      # Din Etapa 3
+│   ├── data_acquisition/             
+│   │   └── simulator.py
+│   ├── preprocessing/                      
 │   ├── neural_network/
-│   │   ├── model.py                        # Din Etapa 4
-│   │   ├── train.py                        # Din Etapa 5
-│   │   ├── evaluate.py                     # Din Etapa 5
-│   │   └── optimize.py                     # NOU - Script optimizare/tuning
+│   │   ├── antrenare.py                
+│   │   ├── confusion_matrix_optimized.py        
+│   │   ├── find_errors.py                   
+│   │   └── generate_visualizations.py                 
 │   └── app/
-│       └── main.py                         # ACTUALIZAT - încarcă model OPTIMIZAT
+│       ├── app.py
+│       └── server.py                       
 │
 ├── models/
-│   ├── untrained_model.h5                  # Din Etapa 4
-│   ├── trained_model.h5                    # Din Etapa 5
-│   ├── optimized_model.h5                  # NOU - OBLIGATORIU
+│   └── trained_model.keras                 
 │
 ├── results/
-│   ├── training_history.csv                # Din Etapa 5
-│   ├── test_metrics.json                   # Din Etapa 5
-│   ├── optimization_experiments.csv        # NOU - OBLIGATORIU
-│   ├── final_metrics.json                  # NOU - Metrici model optimizat
+│   ├── training_history.csv                
+│   ├── test_metrics.json                   
+│   ├── optimization_experiments.csv        
+│   ├── final_metrics.json
+│   └── hyperparameters.yaml                 
 │
 ├── config/
-│   ├── preprocessing_params.pkl            # Din Etapa 3
-│   └── optimized_config.yaml               # NOU - Config model final
+│   └── config.py              
 │
 ├── requirements.txt                        # Actualizat
 └── .gitignore

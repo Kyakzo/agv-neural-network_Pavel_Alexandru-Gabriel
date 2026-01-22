@@ -126,8 +126,8 @@ agv-neural-network/
 
 - [x] Structură repository configurată
 - [x] Dataset analizat (EDA realizată)
-- [ ] Date preprocesate
-- [ ] Seturi train generate
-- [ ] Documentație actualizată în README + `data/README.md`
+- [x] Date preprocesate
+- [x] Seturi train generate
+- [x] Documentație actualizată în README + `data/README.md`
 
 ---
