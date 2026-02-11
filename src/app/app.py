@@ -3,8 +3,10 @@ import threading
 
 app = Flask(__name__)
 
-robot_status = {}
-status_lock = threading.Lock()
+robot_status = {}  # Variabilă globală pentru stocarea ultimei stări a robotului
+status_lock = threading.Lock()  # Lock pentru a preveni Race Conditions între thread-ul serverului și request-urile concurente
+
+# Template HTML/JS integrat direct (pentru simplitate într-un singur fișier)
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -97,6 +99,7 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def dashboard():
+    """Randează pagina principală a dashboard-ului."""
     return render_template_string(HTML_TEMPLATE)
 
 @app.route('/api/robot/status', methods=['POST'])

@@ -11,6 +11,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from tensorflow.keras.models import load_model
 from config.config import *
 
+# =================================================================================
+# Clasa Robot: Implementează fizica unui vehicul cu tracțiune diferențială și simularea senzorilor de linie.
+# =================================================================================
+
 class Robot(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -19,10 +23,12 @@ class Robot(pygame.sprite.Sprite):
         pygame.draw.circle(self.original_image, (0, 255, 0), (25, 10), 3)
         self.image = self.original_image
         self.rect = self.image.get_rect(center=(x, y))
+        # Variabile de stare cinematică
         self.angle = 0
         self.speed = 0
         self.x = x
         self.y = y
+        # Comenzi motoare (normalizate între -1 și 1)
         self.motor_left = 0
         self.motor_right = 0
         self.sensors = []
@@ -30,40 +36,50 @@ class Robot(pygame.sprite.Sprite):
 
     def update(self, motor_left, motor_right):
         self.motor_left = np.clip(motor_left, -1, 1)
-        self.motor_right = np.clip(motor_right, -1, 1)
+        self.motor_right = np.clip(motor_right, -1, 1)  # Limităm comenzile la intervalul [-1, 1] pentru siguranță
 
+        # Convertim comanda (-1 la 1) în viteză (pixeli/frame) -> Factorul 5 reprezintă viteza maximă
         v_left = self.motor_left * 5
         v_right = self.motor_right * 5
 
+        # Calculăm viteza liniară medie
         if v_left > 0 and v_right > 0:
             self.speed = (v_left + v_right) / 2
         else:
             self.speed = (v_left + v_right) / 2
 
-        L = self.rect.width
-        self.angle += math.degrees((v_right - v_left) / L)
-        self.angle %= 360
+        L = self.rect.width #Calculăm viteza unghiulară (rotația) <-> L = distanța dintre roți (aproximată prin lățimea sprite-ului)
+        self.angle += math.degrees((v_right - v_left) / L) # Formula cinematică: omega = (v_right - v_left) / L
+        self.angle %= 360 # Normalizare unghi 0-360
 
+        # Actualizăm poziția X, Y folosind trigonometrie
+        # Minus la Y deoarece în Pygame axa Y crește în jos
         rad = math.radians(self.angle)
         self.x += self.speed * math.cos(rad)
         self.y -= self.speed * math.sin(rad)
 
+        # Rotim imaginea robotului pentru afișare
         self.image = pygame.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
+        # Recalculăm poziția senzorilor după mișcare
         self.update_sensors()
 
     def update_sensors(self):
-        self.sensors = []
+        """Calculează pozițiile spațiale ale celor 3 senzori (Stânga, Centru, Dreapta) relativ la centrul și orientarea robotului."""
+        self.sensors = [] # Unghiurile senzorilor față de axa centrală: -45 (Stânga), 0 (Centru), +45 (Dreapta)
         angles = [-45, 0, 45]
         for angle_offset in angles:
             sensor_angle = math.radians(self.angle - angle_offset)
-            sensor_len = 40
+            sensor_len = 40 # Lungimea razei senzorului
+            # Calculăm punctul de final al senzorului
             sensor_end_x = self.x + sensor_len * math.cos(sensor_angle)
             sensor_end_y = self.y - sensor_len * math.sin(sensor_angle)
             self.sensors.append(((self.x, self.y), (sensor_end_x, sensor_end_y)))
 
     def read_sensors(self, screen):
+        #Simulează citirea senzorilor prin verificarea culorii pixelilor de pe ecran.
+        #Returnează: [s_stanga, s_centru, s_dreapta] (0 = Linie Neagră, 1 = Alb/Fundal)
         sensor_readings = []
         for sensor_line in self.sensors:
             reading = 1.0
@@ -71,6 +87,7 @@ class Robot(pygame.sprite.Sprite):
             steps = 20
             for i in range(steps):
                 t = i / steps
+                # Interpolare liniară pentru a găsi coordonatele punctului
                 px = int(sensor_line[0][0] * (1 - t) + sensor_line[1][0] * t)
                 py = int(sensor_line[0][1] * (1 - t) + sensor_line[1][1] * t)
 
@@ -95,6 +112,7 @@ def main():
     track_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
     track_surface.fill(BACKGROUND_COLOR)
 
+    # Desenare traseu hardcodat (Circuit de antrenament)
     pygame.draw.line(track_surface, LINE_COLOR, (100, 500), (400, 400), 15)
     pygame.draw.line(track_surface, LINE_COLOR, (400, 400), (700, 200), 15)
     pygame.draw.line(track_surface, LINE_COLOR, (700, 200), (600, 100), 15)
@@ -102,6 +120,7 @@ def main():
     robot = Robot(100, 500)
     all_sprites = pygame.sprite.Group(robot)
 
+    # LOGICA PENTRU MODUL MANUAL (Colectare de date)
     if MOD_OPERARE == 'MANUAL':
         if not os.path.exists(CSV_FILENAME):
             with open(CSV_FILENAME, 'w', newline='') as f:

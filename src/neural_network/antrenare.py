@@ -16,12 +16,12 @@ from config.config import *
 
 def discretize_action(left_motor, right_motor, threshold=0.2):
     if right_motor - left_motor > threshold:
-        return 1
+        return 1 # Viraj Stanga (Motor Drept > Motor Stang)
     elif left_motor - right_motor > threshold:
-        return 2
+        return 2 # Viraj Dreapta
     elif left_motor > 0 and right_motor > 0:
-        return 0
-    return 3
+        return 0 # Inainte
+    return 3 # Stationare sau eroare
 
 def main():
     print("=== Începere antrenare model ===")
@@ -51,12 +51,20 @@ def main():
 
     print(f"Date încărcate: {len(df)} mostre.")
 
+    # 2. Împărțire date (Train / Validation / Test)
+    # 70% Train, 30% Temp
     X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.30, random_state=42, shuffle=True)
-
+    # Din Temp: 50% Val, 50% Test => 15% Val, 15% Test din total
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.50, random_state=42)
 
     print(f"Split: Train={len(X_train)}, Val={len(X_val)}, Test={len(X_test)}")
 
+    # Arhitectura aleasă este una de tip "Feed-Forward" (Sequential)
+    # Strat Input: 3 neuroni (corespunzător celor 3 senzori)
+    # Strat Ascuns 1: 16 neuroni, activare ReLU pentru non-linearitate
+    # Strat Ascuns 2 (Adăugat în Etapa 6): 8 neuroni
+    # Strat Output: 2 neuroni (Motor Stânga, Motor Dreapta)
+    # Activare Lineară deoarece facem REGRESIE (valori continue [-1, 1])
     model = Sequential([
         Dense(16, input_shape=(3,), activation='relu'),
         Dense(8, activation='relu'),
@@ -71,6 +79,8 @@ def main():
 
     model.compile(optimizer='adam', loss='mse', metrics=['mae'])
 
+    # Configurare Callbacks
+    # EarlyStopping: Oprește antrenarea dacă val_loss nu scade timp de 5 epoci
     early_stopping = EarlyStopping(
         monitor='val_loss',
         patience=5,
@@ -78,6 +88,7 @@ def main():
         restore_best_weights=True
     )
 
+    # ReduceLROnPlateau: Scade Learning Rate-ul dacă performanța stagnează
     lr_scheduler = ReduceLROnPlateau(
         monitor='val_loss',
         factor=0.5,
@@ -104,6 +115,7 @@ def main():
     test_loss, test_mae = model.evaluate(X_test, y_test, verbose=0)
     print(f"Test Loss (MSE): {test_loss:.4f}")
 
+    # Generare predicții pentru calculul metricilor discrete
     y_pred = model.predict(X_test)
 
     y_test_classes = [discretize_action(l, r) for l, r in y_test]

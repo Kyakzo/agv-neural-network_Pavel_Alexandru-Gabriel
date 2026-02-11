@@ -303,8 +303,8 @@ Output: 2 valori continue (regresie)
 | 3 | Inferență | Modelul prezice vitezele motoarelor; Dashboard-ul afișează probabilitățile (ex: "Înainte: 85%"). |
 | 4 | Decizie | Robotul aplică vitezele diferențiale și își ajustează unghiul de deplasare pentru a rămâne pe trasă.|
 
-**Latență măsurată end-to-end:** 32 ms ms  
-**Data și ora demonstrației:** 11.02.2026, x:30
+**Latență măsurată end-to-end:** 32 ms  
+**Data și ora demonstrației:** 12.02.2026, 1:00 AM
 
 ---
 
@@ -313,7 +313,7 @@ Output: 2 valori continue (regresie)
 ```
 agv-neural-network/
 │
-├── PAVEL_Alexandru-Gabriel_631AB_README_Proiect_RN.md   # ← ACEST FIȘIER (Overview Final Proiect - Pe moodle la Evaluare Finala RN > Upload Livrabil 1 - Proiect RN (Aplicatie Sofware) - trebuie incarcat cu numele: NUME_Prenume_Grupa_README_Proiect_RN.md)
+├── README.md   # ← ACEST FIȘIER (Overview Final Proiect - Pe moodle la Evaluare Finala RN > Upload Livrabil 1 - Proiect RN (Aplicatie Sofware) - trebuie incarcat cu numele: NUME_Prenume_Grupa_README_Proiect_RN.md)
 │
 ├── docs/
 │   ├── datasets/
