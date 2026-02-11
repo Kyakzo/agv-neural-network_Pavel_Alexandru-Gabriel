@@ -162,13 +162,28 @@ def main():
 
             robot.update(motor_left_cmd, motor_right_cmd)
 
+            threshold = 0.1
+            prob_left = 0
+            prob_forward = 0
+            prob_right = 0
+
+            if motor_right_cmd > motor_left_cmd + threshold:
+                prob_left = 100
+            elif motor_left_cmd > motor_right_cmd + threshold:
+                prob_right = 100
+            else:
+                prob_forward = 100
+            
+            probabilities = [prob_left, prob_forward, prob_right]
+
             try:
                 status_data = {
                     'x': robot.x,
                     'y': robot.y,
                     'angle': robot.angle,
                     'sensors': sensor_readings,
-                    'motors': [float(motor_left_cmd), float(motor_right_cmd)]
+                    'motors': [float(motor_left_cmd), float(motor_right_cmd)],
+                    'probabilities': probabilities
                 }
                 requests.post(FLASK_SERVER_URL, json=status_data, timeout=0.1)
             except requests.exceptions.RequestException as e:

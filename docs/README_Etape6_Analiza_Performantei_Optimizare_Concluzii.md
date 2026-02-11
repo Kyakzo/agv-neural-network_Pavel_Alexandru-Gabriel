@@ -376,8 +376,7 @@ Salvați în `docs/results/`:
 
 ```
 agv-neural-network/
-├── README.md                               # Overview general proiect (FINAL)
-├── x                  # Din Etapa 3
+├── README_Etapa3.md                  # Din Etapa 3
 ├── README_Etapa4_Arhitectura_SIA.md        # Din Etapa 4
 ├── README_Etapa5_Antrenare_RN.md           # Din Etapa 5
 ├── README_Etape6_Analiza_Performantei_Optimizare_Concluzii.md         # ← ACEST FIȘIER (completat)
@@ -476,7 +475,7 @@ agv-neural-network/
 - [X] Plan post-feedback scris
 
 ### Verificări Tehnice
-- [ ] `requirements.txt` actualizat
+- [X] `requirements.txt` actualizat
 - [X] Toate path-urile RELATIVE
 - [X] Cod nou comentat (minimum 15%)
 - [X] `git log` arată commit-uri incrementale

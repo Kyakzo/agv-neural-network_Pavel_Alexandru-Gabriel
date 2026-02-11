@@ -32,7 +32,7 @@ HTML_TEMPLATE = """
                 <pre id="status-data">Așteptare date...</pre>
             </div>
             <div class="chart-box">
-                <span class="label">Probabilități Clase:</span>
+                <span class="label">Probabilitati clase:</span>
                 <canvas id="probChart"></canvas>
             </div>
         </div>
